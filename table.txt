@@ -1,0 +1,7 @@
+npx sequelize-cli model:generate --name user --attributes name:string,email:string,password:string,status:string
+npx sequelize-cli model:generate --name profile --attributes phone:string,gender:string,address:text,image:string,idUser:integer
+npx sequelize-cli model:generate --name product --attributes name:string,desc:text,price:integer,image:string,qty:integer,idUser:integer
+npx sequelize-cli model:generate --name transaction --attributes idProduct:integer,idBuyer:integer,idSeller:integer,price:integer,status:string
+npx sequelize-cli model:generate --name category --attributes name:string
+npx sequelize-cli model:generate --name categoryProduct --attributes idProduct:integer,idCategory:integer
+npx sequelize-cli model:generate --name chat --attributes message:text,idSender:integer,idRecipient:integer
