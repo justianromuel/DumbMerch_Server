@@ -8,6 +8,7 @@ exports.addTransaction = async (req, res) => {
         let newTransaction = await transaction.create({
             ...data,
             idBuyer: req.user.id,
+            status: 'pending'
         })
 
         let transactionData = await transaction.findOne({

@@ -31,6 +31,9 @@ const {
     addTransaction,
     getTransactions
 } = require('../controllers/transaction')
+const {
+    addProfile, getProfile, updateProfile
+} = require('../controllers/profile')
 
 // Middleware:
 // Authentication
@@ -68,5 +71,10 @@ router.delete('/category/:id', auth, deleteCategory)
 // Transaction
 router.post('/transaction', auth, addTransaction)
 router.get('/transactions', auth, getTransactions)
+
+// Profile
+router.post('/profile', auth, uploadFile('image'), addProfile)
+router.get('/profile', auth, getProfile)
+router.patch('/profile/:id', auth, uploadFile('image'), updateProfile)
 
 module.exports = router
