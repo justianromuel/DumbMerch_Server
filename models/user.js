@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      //hasOne association to profile model
       user.hasOne(models.profile, {
         as: 'profile',
         foreignKey: {
@@ -38,6 +39,21 @@ module.exports = (sequelize, DataTypes) => {
         as: 'sellerTransactions',
         foreignKey: {
           name: 'idSeller',
+        },
+      })
+
+      // hasMany association to chat model
+      user.hasMany(models.chat, {
+        as: 'senderMessage',
+        foreignKey: {
+          name: 'idSender',
+        },
+      })
+
+      user.hasMany(models.chat, {
+        as: 'recipientMessage',
+        foreignKey: {
+          name: 'idRecipient',
         },
       })
     }

@@ -1,5 +1,5 @@
 // import model here
-const { user } = require('../../models')
+const { user, profile } = require('../../models')
 
 // import package here
 const Joi = require('joi')
@@ -27,6 +27,22 @@ exports.register = async (req, res) => {
     }
 
     try {
+        const userExist = await user.findOne({
+            where: {
+                email: req.body.email
+            },
+            attributes: {
+                exclude: ["createdAt", "updatedAt"]
+            }
+        })
+
+        // return console.log(userExist);
+        if (userExist) {
+            return res.send({
+                status: 'failed',
+                message: 'Email already exist'
+            })
+        }
         // we generate salt (random value) with 10 rounds
         const salt = await bcrypt.genSalt(10)
         // we hash password from request with salt
@@ -39,9 +55,17 @@ exports.register = async (req, res) => {
             status: 'customer'
         })
 
+        const newProfile = await profile.create({
+            image: '-',
+            phone: '-',
+            gender: '-',
+            address: '-',
+            idUser: newUser.id
+        })
+
         const token = jwt.sign({ id: newUser.id }, process.env.TOKEN_KEY)
 
-        res.status(201).send({
+        res.status(200).send({
             status: 'success',
             data: {
                 user: {
@@ -52,7 +76,7 @@ exports.register = async (req, res) => {
             }
         })
     } catch (error) {
-        console.log(error);
+        console.log(error)
         res.status(500).send({
             status: 'failed',
             message: 'Server Error'
@@ -89,7 +113,7 @@ exports.login = async (req, res) => {
             }
         })
 
-        // return console.log(userExist);
+        // return console.log(userExist)
         if (!userExist) {
             return res.status(400).send({
                 status: 'failed',
@@ -114,6 +138,7 @@ exports.login = async (req, res) => {
             status: 'success',
             data: {
                 user: {
+                    id: userExist.id,
                     name: userExist.name,
                     email: userExist.email,
                     status: userExist.status,
@@ -122,10 +147,49 @@ exports.login = async (req, res) => {
             }
         })
     } catch (error) {
-        console.log(error);
+        console.log(error)
         res.status(500).send({
             status: 'failed',
             message: 'Server Error'
+        })
+    }
+}
+
+exports.checkAuth = async (req, res) => {
+    try {
+        const id = req.user.id
+
+        const dataUser = await user.findOne({
+            where: {
+                id,
+            },
+            attributes: {
+                exclude: ["createdAt", "updatedAt", "password"],
+            },
+        })
+
+        if (!dataUser) {
+            return res.status(404).send({
+                status: "failed",
+            })
+        }
+
+        res.send({
+            status: "success",
+            data: {
+                user: {
+                    id: dataUser.id,
+                    name: dataUser.name,
+                    email: dataUser.email,
+                    status: dataUser.status,
+                },
+            },
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(404).send({
+            status: "failed",
+            message: "Server Error",
         })
     }
 }

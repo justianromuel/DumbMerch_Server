@@ -4,7 +4,8 @@ const router = express.Router()
 // Controller:
 const {
     register,
-    login
+    login,
+    checkAuth
 } = require('../controllers/auth')
 const {
     // addUsers,
@@ -29,10 +30,13 @@ const {
 } = require('../controllers/category')
 const {
     addTransaction,
-    getTransactions
+    getTransactions,
+    notification
 } = require('../controllers/transaction')
 const {
-    addProfile, getProfile, updateProfile
+    addProfile,
+    getProfile,
+    updateProfile
 } = require('../controllers/profile')
 
 // Middleware:
@@ -46,6 +50,7 @@ const { uploadFile } = require('../middlewares/uploadFile')
 // Auth
 router.post('/register', register)
 router.post('/login', login)
+router.get('/check-auth', auth, checkAuth)
 
 // User
 // router.post('/user', addUsers)
@@ -71,10 +76,11 @@ router.delete('/category/:id', auth, deleteCategory)
 // Transaction
 router.post('/transaction', auth, addTransaction)
 router.get('/transactions', auth, getTransactions)
+router.post('/notification', notification)
 
 // Profile
-router.post('/profile', auth, uploadFile('image'), addProfile)
+// router.post('/profile', auth, uploadFile('image'), addProfile)
 router.get('/profile', auth, getProfile)
-router.patch('/profile/:id', auth, uploadFile('image'), updateProfile)
+router.patch('/profile', auth, uploadFile('image'), updateProfile)
 
 module.exports = router
